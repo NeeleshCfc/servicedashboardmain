@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+    <title>Service Dashboard</title>
+    <style>
+        body {
+            font-family: courier, monospace;
+            background-color: mintcream;
+        }
+        header {
+            background-color: mintcream;
+            color: darkcyan;
+            text-align: center;
+            padding: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            background-color: mintcream;
+            width: 80%;
+            margin: auto;
+        }
+        th, td {
+            border: 1px lightblue;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #333;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .url {
+            text-align: center;
+            font-style: italic;
+            margin-top: 20px;
+        }
+        .chart-container {
+            width: 80%;
+            margin: auto;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Service Dashboard</h1>
+</header><table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Response Time</th>
+        <th>Request Count</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="response : ${responses}">
+        <td class="clickable" th:text="${response.name}"></td>
+        <td class="response-time-chart" data-response-time="${response.responseTime}" data-response-name="${response.name}" th:style="'background-color: ' + ${response.colour}"></td>
+        <td th:text="${response.requestCount}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // get all elements with the class "response-time-chart"
+    const responseTimeCharts = document.querySelectorAll('.response-time-chart');
+
+    // create a chart for each response time element
+    responseTimeCharts.forEach(chart => {
+        const responseTime = chart.dataset.responseTime;
+        const responseName = chart.dataset.responseName;
+
+        // create a canvas element for the chart
+        const canvas = document.createElement('canvas');
+        canvas.width = 400;
+        canvas.height = 200;
+        chart.appendChild(canvas);
+
+        // create the chart using Chart.js
+        new Chart(canvas, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: responseName,
+                    data: [responseTime],
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            }
+        });
+    });
+</script>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://thymeleaf.org">
+<head>
+  <title>Service Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      background-color: white;
+    }
+
+    table {
+      margin: 0 auto;
+      width: 80%;
+      border-collapse: collapse;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 1);
+    }
+
+    table, th, td {
+      border: 1px dodgerblue;
+      padding: 10px;
+    }
+
+    .status-up {
+      background-color: lightgreen;
+    }
+
+    .status-down {
+      background-color: red;
+    }
+
+    .time-green {
+      background-color: lightgreen;
+    }
+
+    .time-amber {
+      background-color: orange;
+    }
+
+    .time-red {
+      background-color: red;
+    }
+
+  </style>
+</head>
+
+<body>
+<div style="background-color: mintcream; padding: 10px; border-radius: 5px;">
+  <h1 style="text-align: center;">Service Dashboard</h1>
+  <script>
+    setInterval(function() {
+      location.reload();
+    }, 30 * 60 * 1000); // 30 minutes in milliseconds
+
+  </script>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <table>
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Version</th>
+      <th>Description</th>
+      <th>Status</th>
+      <th>Total no. of requests</th>
+      <th>Processing time</th>
+      <th>No. of requests to service</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="response : ${responses}">
+      <td th:classappend="${response.details.info.app.name == 'Transaction API' ? 'clickable' : ''}
+                    ${response.details.info.app.name == 'Customer API' ? 'clickable-customer' : ''}"
+          th:text="${response.details.info.app.name}">
+      </td>
+      <td th:text="${response.details.info.app.version}"></td>
+      <td th:text="${response.details.info.app.description}"></td>
+      <td th:text="${response.data.status}" th:classappend="${response.data.status == 'UP' ? 'status-up' : 'status-down'}"></td>
+      <td th:text="${response.details.metrics.httpServerRequests.count}"></td>
+      <td th:text="${response.details.metrics.httpServerRequests.time}" th:classappend="${response.details.metrics.httpServerRequests.time <= 200 ? 'time-green' : response.details.metrics.httpServerRequests.time <= 400 ? 'time-amber' : 'time-red'}"></td>
+      <td th:text="${response.details.metrics.httpServerRequests.uri}"></td>
+    </tr>
+    </tbody>
+  </table>
+  <script>
+    document.addEventListener('click', function(event) {
+      if (event.target.classList.contains('clickable')) {
+        window.location.href = '/TransactionChart.html';
+      } else if (event.target.classList.contains('clickable-customer')) {
+        window.location.href = '/CustomerChart.html';
+      }
+    });
+  </script>
+</div>
+</body>
+</html>

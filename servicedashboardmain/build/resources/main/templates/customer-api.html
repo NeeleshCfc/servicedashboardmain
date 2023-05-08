@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Customer API</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #myChart {
+            width: 100%;
+            height: 300px;
+        }
+    </style>
+</head>
+<body>
+<div id="chart-container" style="margin: auto; width: 80%;">
+    <canvas id="myChart"></canvas>
+</div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var responseTimes = /*[[${responses}]]*/ '';
+    var labels = [];
+    var data = [];
+
+    for (var i = 0; i < responseTimes.length; i++) {
+        var responseTime = responseTimes[i].responseTime;
+        var time = new Date(responseTimes[i].timestamp);
+        var label = time.getHours() + ':' + ('0' + time.getMinutes()).slice(-2);
+        labels.push(label);
+        data.push(responseTime);
+    }
+
+    var ctx = document.getElementById('chart-container').querySelector('canvas').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Response Time',
+                data: data,
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time'
+                    },
+                    ticks: {
+                        autoSkip: false,
+                        callback: function(value, index, values) {
+                            if (index % 6 === 0) {
+                                return value;
+                            }
+                        }
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Response Time'
+                    },
+                    ticks: {
+                        stepSize: 100,
+                        suggestedMax: 1000,
+                        suggestedMin: 0
+                    }
+                }
+            }
+        }
+    });
+    /*]]>*/
+</script>
+</body>
+</html>

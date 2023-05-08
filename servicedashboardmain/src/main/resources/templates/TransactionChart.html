@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Transaction Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #203354 !important;
+            color: white !important;
+        }
+
+        #transactionChart {
+            display: block !important;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<canvas id="transactionChart" width="800" height="600" style="display: block !important;"></canvas>
+
+<script>
+    function updateChart() {
+        // Retrieve the TransactionArray from the model
+        var transactionArray = [[${TransactionArray}]];
+
+        // Define the labels for the chart
+        var labels = [];
+        for (var i = 0; i < transactionArray.length; i++) {
+            var time = new Date(Date.now() - ((transactionArray.length - i - 1) * 5000));
+            labels.push(time.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', second: '2-digit'}));
+        }
+
+        // Define the data for the chart
+        var data = {
+            labels: labels,
+            datasets: [{
+                label: "Transaction Chart",
+                data: transactionArray,
+                fill: true,
+                backgroundColor: 'rgba(255, 104, 99, 1)',
+                borderColor: '#fe2c54',
+                lineTension: 0.3
+            }]
+        };
+
+        // Define the options for the chart
+        var options = {
+            maintainAspectRatio: false,
+            responsive: true,
+            height: 600,
+            scales: {
+                x: {
+                    ticks: {
+                        color: '#B1F2FF',
+                        beginAtZero: true
+                    },
+                    grid: {
+                        color: 'rgba(177, 242, 255, 0.3)',
+                        borderColor: 'rgba(177, 242, 255, 0.3)',
+                        borderWidth: 1,
+                        borderDash: [5, 10],
+                        drawBorder: false
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: '#B1F2FF',
+                        beginAtZero: true,
+                        suggestedMax: Math.max(...transactionArray) + 5
+                    },
+                    grid: {
+                        color: 'rgba(177, 242, 255, 0.3)',
+                        borderColor: 'rgba(177, 242, 255, 0.3)',
+                        borderWidth: 1,
+                        borderDash: [5, 10],
+                        drawBorder: false
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#B1F2FF'
+                    }
+                }
+            }
+        };
+
+        // Create a new Chart object
+        var ctx = document.getElementById("transactionChart").getContext("2d");
+        var chart = new Chart(ctx, {
+            type: "line",
+            data: data,
+            options: options
+        });
+    }
+
+    // Call updateChart() initially and every 5 seconds
+    updateChart();
+    setInterval(function() {
+        location.reload();
+    }, 5000);
+</script>
+</body>
+</html>

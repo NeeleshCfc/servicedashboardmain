@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Response Time Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.2/chart.min.js"></script>
+</head>
+<body>
+<h1>Response Time Dashboard</h1>
+<div th:each="response : ${responses}">
+    <h2 th:text="${response.name}"></h2>
+    <canvas th:id="${response.name}" th:width="400" th:height="400"></canvas>
+    <script th:inline="javascript">
+        var response = /*[[${response}]]*/ null;
+        var chart = new Chart(document.getElementById("[[${response.name}]]"), {
+            type: 'line',
+            data: {
+                labels: ['response time'],
+                datasets: [{
+                    label: 'Response Time',
+                    data: [response.responseTime],
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Response Time'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'response time'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</div>
+</body>
+</html>
